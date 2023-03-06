@@ -6,9 +6,9 @@ const initialState = {
   video: "",
   loading: false,
   error: null,
-  recommendedVideoLoading: false,
-  recommendedVideo: [],
-  recommendedVideoError: null,
+  recommendedVideosLoading: false,
+  recommendedVideos: [],
+  recommendedVideosError: null,
 };
 
 const fetchVideo = createAsyncThunk("video/fetchVideo", async function () {
@@ -31,6 +31,7 @@ const videoSlice = createSlice({
   name: "video",
   initialState,
   extraReducers: (builder) => {
+    //extra reducer for single video.
     builder.addCase(fetchVideo.pending, (state, action) => {
       state.loading = true;
       state.error = null;
@@ -44,18 +45,23 @@ const videoSlice = createSlice({
       state.loading = false;
       state.error = action.error.message;
     });
+
+    //extra reducer for fetchRelatedVideos.
+
     builder.addCase(fetchRelatedVideos.pending, (state, action) => {
-      state.recommendedVideoLoading = true;
-      state.recommendedVideoError = null;
+      state.recommendedVideosLoading = true;
+      state.recommendedVideosError = null;
     });
     builder.addCase(fetchRelatedVideos.fulfilled, (state, action) => {
-      state.recommendedVideoLoading = false;
-      state.recommendedVideoError = null;
-      state.recommendedVideo = action.payload.sort((a, b) => b.views - a.views);
+      state.recommendedVideosLoading = false;
+      state.recommendedVideosError = null;
+      state.recommendedVideos = action.payload.sort(
+        (a, b) => b.views - a.views
+      );
     });
     builder.addCase(fetchRelatedVideos.rejected, (state, action) => {
-      state.recommendedVideoLoading = false;
-      state.recommendedVideoError = action.error.message;
+      state.recommendedVideosLoading = false;
+      state.recommendedVideosError = action.error.message;
     });
   },
 });
